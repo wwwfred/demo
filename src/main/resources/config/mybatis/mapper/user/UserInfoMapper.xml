@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.teshehui.demo.dao.impl.UserInfoDaoImpl">
+<mapper namespace="net.wwwfred.framework.demo.dao.impl.UserInfoDaoImpl">
 	
 	<!-- 常用sql片段，一般只需修改tableName中的值，其他不变 -->
    	<sql id="tableName">

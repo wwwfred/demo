@@ -25,8 +25,8 @@
 	</bean>
 	
 	<aop:config>
-		<aop:pointcut id="controllerPointCut" expression="execution(* net.wwwfred.yw.alumni..controller..*.*(..))"/>
-		<aop:pointcut id="managerPointCut" expression="execution(* net.wwwfred.yw.alumni..manager..*.*(..))"/>
+		<aop:pointcut id="controllerPointCut" expression="execution(* net.wwwfred.framework.demo..controller..*.*(..))"/>
+		<aop:pointcut id="managerPointCut" expression="execution(* net.wwwfred.framework.demo..manager..*.*(..))"/>
 		<aop:pointcut id="logPointCut"
 				expression="(@annotation(net.wwwfred.framework.core.aop.log.LogAnnotaion))||(@within(net.wwwfred.framework.core.aop.log.LogAnnotaion))" />
 		<aop:pointcut id="cachePointCut"

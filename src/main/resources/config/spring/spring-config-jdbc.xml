@@ -134,10 +134,10 @@
 		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml" />
 		   
 		<!-- 自动扫描model目录, 省掉Configuration.xml里的手工配置 -->
-        <!-- <property name="typeAliasesPackage" value="com.teshehui.demo.model,com.teshehui.demo.dao.po" /> -->
+        <property name="typeAliasesPackage" value="net.wwwfred.framework.demo.model,net.wwwfred.framework.demo.dao.po" />
         
 		 <!-- 显式指定Mapper文件位置 -->
-        <!-- <property name="mapperLocations" value="classpath:config/mybatis/mapper/*/*.xml"></property> -->
+        <property name="mapperLocations" value="classpath:config/mybatis/mapper/*/*.xml"></property>
 	</bean>
 	<bean id="mybatisSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" >
 		<constructor-arg index="0" ref="mybatisSessionFactory" />

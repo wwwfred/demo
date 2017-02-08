@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.teshehui.framework.dao.mybatis.impl.MybatisDaoImpl">
+<mapper namespace="net.wwwfred.framework.core.dao.mybatis.impl.MybatisDaoImpl">
 	
 	<!-- 常用sql片段 -->
    	<sql id="select">
@@ -41,7 +41,7 @@
    		FROM
    	</sql>
    	
-	<select id="getId" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="java.lang.Long">
+	<select id="getId" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" resultType="java.lang.Long">
 		<include refid="select"/>
 		<if test="dialect=='oracle'">
         	${tableSeqName}.NEXTVAL 
@@ -53,7 +53,7 @@
         </if>
 	</select>
 	
- 	<insert id="insertOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" >
+ 	<insert id="insertOne" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" >
 		<include refid="insert"/>
 		${tableName}
 		<include refid="leftBracket"/>
@@ -69,7 +69,7 @@
   		</foreach>
 	</insert>
 	
-	<delete id="deleteOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType">
+	<delete id="deleteOne" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType">
     	<include refid="delete"/>
     	<include refid="from"/>
     	${tableName}
@@ -83,7 +83,7 @@
 		</if>
     </delete>
     
-    <update id="updateOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" >
+    <update id="updateOne" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" >
 		<include refid="update"/>
 		${tableName}
 		<include refid="set"/>
@@ -103,7 +103,7 @@
 		</if>
     </update>
 	
-	<select id="selectOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
+	<select id="selectOne" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
 		<include refid="select"/>
 		<foreach item="item" index="index" collection="columnArray"
       		open="" separator="," close="">
@@ -121,7 +121,7 @@
 		</if>
 	</select>
 	
-	<select id="selectList" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
+	<select id="selectList" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
 		<include refid="select"/>
 		<foreach item="item" index="index" collection="columnArray"
       		open="" separator="," close="">
@@ -139,7 +139,7 @@
 		</if>
 	</select>
 	
-	<select id="selectColumns" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="java.lang.String">
+	<select id="selectColumns" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType" resultType="java.lang.String">
 		<include refid="select"/>
 		<if test="dialect=='oracle'">
         	COLUMN_NAME
@@ -157,7 +157,7 @@
         </if>
 	</select>
     
-    <select id="count" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType"
+    <select id="count" parameterType="net.wwwfred.framework.core.dao.mybatis.impl.MapperParameterType"
 		resultType="java.lang.Long">
 		<include refid="select"/>
 		<include refid="count"/>
