@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-3.2.xsd         
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	">	
+	
+	<!-- redis config -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxActive" value="${redis.maxActive}" />
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxWait" value="${redis.maxWait}" />
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean>
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="usePool" value="true"></property>
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="${redis.pass}" />
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.default.db}"></property>
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+    </bean>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">  
+        <property name="connectionFactory"   ref="jedisConnectionFactory" />  
+    </bean>
+    <bean id="redisCache" class="net.wwwfred.framework.core.cache.impl.RedisCacheImpl" >
+         <property name="redisTemplate"   ref="redisTemplate" /> 
+         <!-- <property name="cachedVersion" value="${redis.version}"/>  -->
+	</bean>  
+	
+	<!-- Memcached 连接池 -->
+ 	<bean id="memcachedPool" class="com.danga.MemCached.SockIOPool" factory-method="getInstance" init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<value>${memcache.servers}</value>
+		</property>
+		<property name="initConn">
+			<value>${memcache.initConn}</value>
+		</property>
+		<property name="minConn">
+			<value>${memcache.minConn}</value>
+		</property>
+		<property name="maxConn">
+			<value>${memcache.maxConn}</value>
+		</property>
+		<property name="maintSleep">
+			<value>30</value>
+		</property>
+		<property name="nagle">
+			<value>false</value>
+		</property>
+		<property name="socketTO">
+			<value>3000</value>
+		</property>
+		<property name="hashingAlg">
+			<value>2</value>
+		</property>
+	</bean>
+	
+	<!-- Memcached 客户端 -->
+	<bean id="thirdMemcachedClient" class="com.danga.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="memCache" class="net.wwwfred.framework.core.cache.impl.MemCacheImpl">
+		<property name="client" ref="thirdMemcachedClient"/>
+		<property name="cachedVersion" value="${memcache.version}"/>
+		<!-- <property name="redisCache" ref="redisCache"></property> -->
+	</bean>
+	
+</beans>

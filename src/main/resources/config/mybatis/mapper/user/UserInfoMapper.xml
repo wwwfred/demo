@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.teshehui.demo.dao.impl.UserInfoDaoImpl">
+	
+	<!-- 常用sql片段，一般只需修改tableName中的值，其他不变 -->
+   	<sql id="tableName">
+       T_MEMBER
+    </sql>
+   	<sql id="select">
+   		SELECT
+   	</sql>
+   	<sql id="insert">
+   		INSERT INTO
+   	</sql>
+   	<sql id="leftBracket">
+   		(
+   	</sql>
+   	<sql id="rightBracket">
+   		)
+   	</sql>
+   	<sql id="values">
+   		VALUES
+   	</sql>
+   	<sql id="update">
+   		UPDATE
+   	</sql>
+   	<sql id="where">
+   		WHERE
+   	</sql>
+   	<sql id="set">
+   		SET
+   	</sql>
+   	<sql id="whereId">
+   		WHERE id=#{id}
+   	</sql>
+   	<sql id="delete">
+   		DELETE
+   	</sql>
+   	<sql id="from">
+   		FROM
+   	</sql>
+
+	<select id="getMember" parameterType="MemberModel" resultType="MemberModel">
+		<include refid="select"/>
+		USER_ID,USER_NAME,MEMBER_CARD_NO,PHONE_MOB,EMAIL
+		<include refid="from"/>
+		<include refid="tableName"/>
+		<include refid="where"/>
+		PHONE_MOB=#{mobilePhone}
+	</select>
+	
+	<select id="getUserCashAccount" parameterType="java.util.Collection" resultType="java.util.Map">
+		<include refid="select"/>
+		M.USER_ID as m_mobilePhone,
+		A.ID as a_id
+		<include refid="from"/>
+		T_MEMBER M
+		left outer join T_CASH_ACCOUNT A on M.USER_ID = A.USER_ID 
+		<include refid="where"/>
+		M.PHONE_MOB=#{mobilePhone}
+	</select>
+	
+	<resultMap id="userInfo" type="UserInfoPO">
+		<association property="member" javaType="MemberModel">
+			<id property="userId" column="m_userId" />
+			<result property="userName" column="m_userName" />
+			<result property="mobilePhone" column="m_mobilePhone" />
+			<result property="email" column="m_email" />
+			<result property="sex" column="m_sex" />
+			<result property="birthday" column="m_birthday" />
+		</association>
+		<association property="userCashAccount" javaType="UserCashAccountModel">
+			<id property="id" column="a_id" />
+			<result property="userId" column="a_userId"/>
+			<result property="userName" column="a_userName" />
+		</association>
+		<collection property="userCashAccountBalanceList" ofType="UserCashAccountBalanceModel">
+			<id property="id" column="b_id" />
+			<result property="cashAccountId" column="b_cashAccountId" />
+			<result property="currencyTypeCode" column="b_currencyTypeCode" />
+			<result property="balance" column="b_balance" />
+			<result property="userId" column="b_userId" />
+		</collection>
+	</resultMap>
+	
+	<select id="queryUserInfo" parameterType="MemberModel" resultMap="userInfo">
+		<include refid="select"/>
+		M.USER_ID as m_userId,
+		M.USER_NAME as m_userName,
+		M.PHONE_MOB as m_mobilePhone,
+		M.EMAIL as m_email,
+		M.SEX as m_sex,
+		M.BIRTHDAY as m_birthday,
+		A.ID as a_id,
+		A.USER_ID as a_userId,
+		A.USER_NAME as a_userName,
+		B.ID as b_id,
+		B.CURRENCY_TYPE_CODE as b_currencyTypeCode,
+		B.USER_ID as b_userId,
+		B.CASH_ACCOUNT_ID as b_cashAccountId,
+		B.BALANCE as b_balance
+		<include refid="from"/>
+		T_MEMBER M
+		left outer join T_CASH_ACCOUNT A on M.USER_ID = A.USER_ID 
+		left outer join T_CASH_BALANCE B on B.CASH_ACCOUNT_ID = A.ID 
+		<include refid="where"/>
+		M.PHONE_MOB=#{mobilePhone}
+	</select>
+	
+	<select id="queryMemberByName" parameterType="MemberModel" resultType="MemberModel">
+		<include refid="select"/>
+		USER_ID as userId,USER_NAME as userName,MEMBER_CARD_NO,PHONE_MOB,EMAIL
+		<include refid="from"/>
+		<include refid="tableName"/>
+		<include refid="where"/>
+		USER_NAME LIKE #{userName}
+		order by userId asc
+	</select>
+	
+	<update id="updateUserNameByMobilePhone" parameterType="MemberModel">
+		<include refid="update"/>
+		<include refid="tableName"/>
+		<include refid="set"/>
+		USER_NAME=#{userName}
+		<include refid="where"/>
+		PHONE_MOB=#{mobilePhone}
+	</update>
+	
+	<delete id="deleteUserByMobilePhone" parameterType="java.lang.String">
+		<include refid="delete"/>
+    	<include refid="from"/>
+    	<include refid="tableName"/>
+    	<include refid="where"/>
+    	PHONE_MOB=#{mobilePhone}
+	</delete>
+	
+	<!-- Very Complex Result Map -->
+	<!-- <resultMap id="detailedBlogResultMap" type="Blog">
+		<constructor>
+			<idArg column="blog_id" javaType="int" />
+		</constructor>
+		<result property="title" column="blog_title" />
+		<association property="author" javaType="Author">
+			<id property="id" column="author_id" />
+			<result property="username" column="author_username" />
+			<result property="password" column="author_password" />
+			<result property="email" column="author_email" />
+			<result property="bio" column="author_bio" />
+			<result property="favouriteSection" column="author_favourite_section" />
+		</association>
+		<collection property="posts" ofType="Post">
+			<id property="id" column="post_id" />
+			<result property="subject" column="post_subject" />
+			<association property="author" javaType="Author" />
+			<collection property="comments" ofType="Comment">
+				<id property="id" column="comment_id" />
+			</collection>
+			<collection property="tags" ofType="Tag">
+				<id property="id" column="tag_id" />
+			</collection>
+			<discriminator javaType="int" column="draft">
+				<case value="1" resultType="DraftPost" />
+			</discriminator>
+		</collection>
+	</resultMap> -->
+
+	<!--执行增加操作的SQL语句,若没有实现类必须保证id和接口中的方法名一样。id和parameterType insert与接口中的insert方法的名字和 参数类型一致。以#{name}的形式引用UserAccountModel参数 
+		的name属性，MyBatis将使用反射读取对象参数 的此属性。#{name}中name大小写敏感。引用其他 属性与此一致。useGeneratedKeys设置 
+		为"true"表明要MyBatis获取由数据库自动生成的主 键；keyProperty="id"指定把获取到的主键值注入 到id属性 -->
+	<!-- <insert id="insert" parameterType="UserAccountModel" useGeneratedKeys="true"
+		keyProperty="id">
+		<include refid="insert"/>
+		<include refid="tableName"/>
+		<include refid="leftBracket"/>
+		user_id,user_name,account_type_id,balance,can_carray_balance,not_carray_balance,created_time,updated_time,pk
+		<include refid="rightBracket"/>
+		<include refid="values"/>
+		<include refid="leftBracket"/>
+		#{userId},#{userName},#{accountTypeId},#{balance},#{canCarrayBalance},#{notCarrayBalance},#{createdTime},#{updatedTime},#{pk}
+		<include refid="rightBracket"/>
+	</insert>
+    
+    <delete id="delete" parameterType="int">
+    	<include refid="delete"/>
+    	<include refid="from"/>
+    	<include refid="tableName"/>
+    	<include refid="whereId"/>
+    </delete>
+    
+    <update id="update" parameterType="UserAccountModel" >
+		<include refid="update"/>
+		<include refid="tableName"/>
+		<include refid="set"/>
+		user_id=#{userId},user_name=#{userName},account_type_id=#{accountTypeId},balance=#{balance},can_carray_balance=#{canCarrayBalance},not_carray_balance=#{notCarrayBalance},created_time=#{createdTime},updated_time=#{updatedTime}
+		<include refid="whereId"/>
+    </update>
+    
+    
+	<select id="queryOne" parameterType="int" resultType="UserAccountModel">
+		<include refid="select"/>
+		*
+		<include refid="from"/>
+		<include refid="tableName"/>
+		<include refid="whereId"/>
+	</select>
+    
+    <select id="queryListPage" parameterType="string" resultMap="UserAccountModel">
+        <include refid="select"/>
+		id
+		<include refid="from"/>
+		<include refid="tableName"/>
+		<include refid="where"/>
+		user_id=#{userId}
+    </select> -->
+ 
+</mapper>

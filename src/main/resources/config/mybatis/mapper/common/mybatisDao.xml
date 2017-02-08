@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.teshehui.framework.dao.mybatis.impl.MybatisDaoImpl">
+	
+	<!-- 常用sql片段 -->
+   	<sql id="select">
+   		SELECT
+   	</sql>
+   	<sql id="count">
+   		COUNT(
+   	</sql>
+   	<sql id="insert">
+   		INSERT INTO
+   	</sql>
+   	<sql id="leftBracket">
+   		(
+   	</sql>
+   	<sql id="rightBracket">
+   		)
+   	</sql>
+   	<sql id="values">
+   		VALUES
+   	</sql>
+   	<sql id="update">
+   		UPDATE
+   	</sql>
+   	<sql id="where">
+   		WHERE
+   	</sql>
+   	<sql id="set">
+   		SET
+   	</sql>
+   	<sql id="equal">
+   		=
+   	</sql>
+   	<sql id="delete">
+   		DELETE
+   	</sql>
+   	<sql id="from">
+   		FROM
+   	</sql>
+   	
+	<select id="getId" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="java.lang.Long">
+		<include refid="select"/>
+		<if test="dialect=='oracle'">
+        	${tableSeqName}.NEXTVAL 
+        	<include refid="from"/> 
+        	DUAL
+        </if>
+        <if test="dialect=='mysql'">
+        	LAST_INSERT_ID()
+        </if>
+	</select>
+	
+ 	<insert id="insertOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" >
+		<include refid="insert"/>
+		${tableName}
+		<include refid="leftBracket"/>
+		<foreach item="item" index="index" collection="columnArray"
+      		open="" separator="," close="">
+			${item}
+  		</foreach>
+		<include refid="rightBracket"/>
+		<include refid="values"/>
+		<foreach item="item" index="index" collection="valueArray"
+      		open="(" separator="," close=")">
+			#{item}
+  		</foreach>
+	</insert>
+	
+	<delete id="deleteOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType">
+    	<include refid="delete"/>
+    	<include refid="from"/>
+    	${tableName}
+    	<if test="conditionArray != null">
+			<where>
+				<foreach item="item" index="index" collection="conditionArray"
+      				open="(" separator="AND" close=")">
+					${item.fieldName} ${item.operator.value} ${item.fieldValue}
+  				</foreach>
+			</where>
+		</if>
+    </delete>
+    
+    <update id="updateOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" >
+		<include refid="update"/>
+		${tableName}
+		<include refid="set"/>
+		<foreach item="item" index="index" collection="columnValueArray"
+      		open="" separator="," close="">
+			${item.columnName}
+			<include refid="equal"/>
+			#{item.fieldValue}
+  		</foreach>
+		<if test="conditionArray != null">
+			<where>
+				<foreach item="item" index="index" collection="conditionArray"
+      				open="(" separator="AND" close=")">
+					${item.fieldName} ${item.operator.value} ${item.fieldValue}
+  				</foreach>
+			</where>
+		</if>
+    </update>
+	
+	<select id="selectOne" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
+		<include refid="select"/>
+		<foreach item="item" index="index" collection="columnArray"
+      		open="" separator="," close="">
+			${item}
+  		</foreach>
+		<include refid="from"/>
+		${tableName}
+		<if test="conditionArray != null">
+			<where>
+				<foreach item="item" index="index" collection="conditionArray"
+      				open="(" separator="AND" close=")">
+					${item.fieldName} ${item.operator.value} ${item.fieldValue}
+  				</foreach>
+			</where>
+		</if>
+	</select>
+	
+	<select id="selectList" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="hashmap">
+		<include refid="select"/>
+		<foreach item="item" index="index" collection="columnArray"
+      		open="" separator="," close="">
+			${item}
+  		</foreach>
+		<include refid="from"/>
+		${tableName}
+		<if test="conditionArray != null">
+			<where>
+				<foreach item="item" index="index" collection="conditionArray"
+      				open="(" separator="AND" close=")">
+					${item.fieldName} ${item.operator.value} ${item.fieldValue}
+  				</foreach>
+			</where>
+		</if>
+	</select>
+	
+	<select id="selectColumns" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType" resultType="java.lang.String">
+		<include refid="select"/>
+		<if test="dialect=='oracle'">
+        	COLUMN_NAME
+        	<include refid="from"/> 
+        	all_tab_columns
+        	<include refid="where"/>
+        	TABLE_NAME = #{tableName}
+        </if>
+		<if test="dialect=='mysql'">
+        	COLUMN_NAME
+        	<include refid="from"/> 
+        	information_schema.COLUMNS
+        	<include refid="where"/>
+        	TABLE_NAME = #{tableName}
+        </if>
+	</select>
+    
+    <select id="count" parameterType="com.teshehui.framework.dao.mybatis.impl.MapperParameterType"
+		resultType="java.lang.Long">
+		<include refid="select"/>
+		<include refid="count"/>
+		${distinct}
+		<foreach item="item" index="index" collection="columnArray"
+      		open="" separator="," close="">
+			${item}
+  		</foreach>
+		<include refid="rightBracket"/>
+		<include refid="from"/>
+		${tableName}
+		<if test="conditionArray != null">
+			<where>
+				<foreach item="item" index="index" collection="conditionArray"
+      				open="(" separator="AND" close=")">
+					${item.fieldName} ${item.operator.value} ${item.fieldValue}
+  				</foreach>
+			</where>
+		</if>
+	</select>
+ 
+</mapper>

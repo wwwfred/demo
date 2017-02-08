@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd  
+	                      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd         
+	                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd         
+	                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+	
+	<!-- PooledConnectionFactory -->
+	<bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">  
+        <property name="brokerURL" value="${mq.connection.url}" />
+        <property name="useAsyncSend" value="true" />  
+        <property name="alwaysSessionAsync" value="true" />  
+        <property name="useDedicatedTaskRunner" value="false" />  
+	</bean>  
+	
+	<!-- <bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="sendTimeout" value="10000"></property>
+		<property name="brokerURL" value="${mq.connection.url}"></property>
+	</bean> -->
+	
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="connectionFactory" ref="activeMQConnectionFactory"></property>
+	</bean>
+	
+	<!-- Spring JMS Template -->  
+	<!-- 指定消息发送后被通知模式：1：Session.AUTO_ACKNOWLEDGE，2：Session.CLIENT_ACKNOWLEDGE -->
+	<!-- 指定消息发送模式：1:DeliveryMode.NON_PERSISTENT,2:DeliveryMode.PERSISTENT -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">  
+    	<property name="connectionFactory" ref="jmsConnectionFactory"/>
+    	<property name="sessionAcknowledgeMode" value="2"></property>  
+    	<property name="deliveryMode" value="2"></property>
+	</bean>
+	
+	<!-- JmsMessageSender -->
+	<bean id="jmsMessageSender" class="net.wwwfred.framework.core.jms.JmsMessageSenderImpl">
+		<property name="jmsTemplate" ref="jmsTemplate"/>
+		<property name="isRedelivered" value="true"></property>
+	</bean>
+		
+	 <!-- JmsQueue -->
+	 <bean id="defaultQueue" class="org.apache.activemq.command.ActiveMQQueue">
+	 	<constructor-arg>  
+        	<value>defaultQueue</value>  
+    	</constructor-arg>  
+	 </bean>
+	 
+	 <!-- JmsTopic -->
+	 <bean id="defaultTopic" class="org.apache.activemq.command.ActiveMQTopic">
+	 	<constructor-arg>  
+        	<value>defaultTopic</value>  
+    	</constructor-arg>  
+	 </bean>
+	 
+	 <bean id="testOne" class="net.wwwfred.framework.demo.manager.impl.MyMqHandlerManagerImpl" init-method="init">
+		<property name="acceptMessagesWhileStopping" value="true"/>
+		<property name="connectionFactory" ref="jmsConnectionFactory"/>
+		<property name="destination"  ref="defaultTopic"/>
+		<property name="isRequestDestinationQueue" value="false"/>
+		<property name="requestDestinationName" value="test"/>
+	</bean>
+	
+	<bean id="testOne2" class="net.wwwfred.framework.demo.manager.impl.MyMqHandlerManagerImpl" init-method="init">
+		<property name="acceptMessagesWhileStopping" value="true"/>
+		<property name="connectionFactory" ref="jmsConnectionFactory"/>
+		<property name="destination"  ref="defaultQueue"/>
+		<property name="isRequestDestinationQueue" value="true"/>
+		<property name="requestDestinationName" value="test"/>
+	</bean>
+	
+	 
+	 <!-- <bean id="testOne1" class="net.wwwfred..JmsMessageListenerContainer" init-method="init">
+		<property name="acceptMessagesWhileStopping" value="true"/>
+		<property name="connectionFactory" ref="jmsConnectionFactory"/>
+		<property name="destination"  ref="defaultQueue"/>
+		<property name="isRequestDestinationQueue" value="true"/>
+		<property name="requestDestinationName" value="testOne"/>
+		<property name="isResponseDestinationQueue" value="false"/>
+		<property name="responseDestinationName" value="testOne2"/>
+	</bean>
+	<bean id="testOne2" class="net.wwwfred..JmsMessageListenerContainer" init-method="init">
+		<property name="acceptMessagesWhileStopping" value="true"/>
+		<property name="connectionFactory" ref="jmsConnectionFactory"/>
+		<property name="destination"  ref="defaultTopic"/>
+		<property name="isRequestDestinationQueue" value="false"/>
+		<property name="requestDestinationName" value="testOne2"/>
+	</bean> -->
+	
+</beans>
