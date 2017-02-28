@@ -14,7 +14,7 @@ import net.wwwfred.framework.core.cache.MemCache;
 import net.wwwfred.framework.core.cache.RedisCache;
 import net.wwwfred.framework.core.dao.DaoQueryCondition;
 import net.wwwfred.framework.core.dao.DaoQueryOperator;
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.demo.dao.UserInfoDao;
 import net.wwwfred.framework.demo.dao.po.UserInfoPO;
 import net.wwwfred.framework.demo.model.MemberModel;
@@ -99,7 +99,7 @@ public class MyService1Impl implements MyService{
 		
 		Long mobilePhoneUserCountResult = userInfoDao.count(null, false, MemberModel.class, new DaoQueryCondition("mobilePhone", DaoQueryOperator.EQ, mobilePhone));
 		if(mobilePhoneUserCountResult>0)
-			throw new TeshehuiRuntimeException("用户已存在");
+			throw new FrameworkRuntimeException("用户已存在");
 		MemberModel member = new MemberModel();
 		member.setMemberCardNo("123456789");
 		member.setUserName(userName);
@@ -110,7 +110,7 @@ public class MyService1Impl implements MyService{
 		
 		mobilePhoneUserCountResult = userInfoDao.count(null, false, UserCashAccountModel.class, new DaoQueryCondition("userId", DaoQueryOperator.EQ, member.getUserId()));
 		if(mobilePhoneUserCountResult>0)
-			throw new TeshehuiRuntimeException("用户账户已存在");
+			throw new FrameworkRuntimeException("用户账户已存在");
 		UserCashAccountModel userCashAccount = new UserCashAccountModel();
 		userCashAccount.setUserName(userName);
 		userCashAccount.setMobilePhone(mobilePhone);
@@ -119,7 +119,7 @@ public class MyService1Impl implements MyService{
 		
 		mobilePhoneUserCountResult = userInfoDao.count(null, false, UserCashAccountBalanceModel.class, new DaoQueryCondition("cashAccountId", DaoQueryOperator.EQ, userCashAccount.getId()));
 		if(mobilePhoneUserCountResult>0)
-			throw new TeshehuiRuntimeException("用户账户余额已存在");
+			throw new FrameworkRuntimeException("用户账户余额已存在");
 		Map<String, Long> balanceMap = JSONUtil.toMap(balance, Long.class);
 		UserCashAccountBalanceModel userCashAccountBalance = new UserCashAccountBalanceModel();
 		String currencyTypeCode = "01";

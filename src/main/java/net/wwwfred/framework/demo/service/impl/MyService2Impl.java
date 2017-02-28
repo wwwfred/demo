@@ -15,7 +15,7 @@ import net.wwwfred.framework.core.cache.RedisCache;
 import net.wwwfred.framework.core.dao.DaoQueryCondition;
 import net.wwwfred.framework.core.dao.DaoQueryOperator;
 import net.wwwfred.framework.core.dao.mybatis.MybatisDao;
-import net.wwwfred.framework.core.exception.TeshehuiRuntimeException;
+import net.wwwfred.framework.core.exception.FrameworkRuntimeException;
 import net.wwwfred.framework.demo.dao.po.UserInfoPO;
 import net.wwwfred.framework.demo.model.MemberModel;
 import net.wwwfred.framework.demo.model.UserCashAccountBalanceModel;
@@ -103,7 +103,7 @@ public class MyService2Impl implements MyService{
 		{
 			Long mobilePhoneUserCountResult = mybatisDao.count(null, false, MemberModel.class, new DaoQueryCondition("mobilePhone", DaoQueryOperator.EQ, mobilePhone));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户已存在");
+				throw new FrameworkRuntimeException("用户已存在");
 			MemberModel member = new MemberModel();
 			member.setMemberCardNo("123456789");
 			member.setUserName(userName+"mySql");
@@ -114,7 +114,7 @@ public class MyService2Impl implements MyService{
 			
 			mobilePhoneUserCountResult = mybatisDao.count(null, false, UserCashAccountModel.class, new DaoQueryCondition("userId", DaoQueryOperator.EQ, member.getUserId()));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户账户已存在");
+				throw new FrameworkRuntimeException("用户账户已存在");
 			UserCashAccountModel userCashAccount = new UserCashAccountModel();
 			userCashAccount.setUserName(userName);
 			userCashAccount.setMobilePhone(mobilePhone);
@@ -123,7 +123,7 @@ public class MyService2Impl implements MyService{
 			
 			mobilePhoneUserCountResult = mybatisDao.count(null, false, UserCashAccountBalanceModel.class, new DaoQueryCondition("cashAccountId", DaoQueryOperator.EQ, userCashAccount.getId()));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户账户余额已存在");
+				throw new FrameworkRuntimeException("用户账户余额已存在");
 			Map<String, Long> balanceMap = JSONUtil.toMap(balance, Long.class);
 			UserCashAccountBalanceModel userCashAccountBalance = new UserCashAccountBalanceModel();
 			String currencyTypeCode = "01";
@@ -143,7 +143,7 @@ public class MyService2Impl implements MyService{
 		{
 			Long mobilePhoneUserCountResult = mybatisDao2.count(null, false, MemberModel.class, new DaoQueryCondition("mobilePhone", DaoQueryOperator.EQ, mobilePhone));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户已存在");
+				throw new FrameworkRuntimeException("用户已存在");
 			MemberModel member = new MemberModel();
 			member.setMemberCardNo("123456789");
 			member.setUserName(userName+"oracle");
@@ -154,7 +154,7 @@ public class MyService2Impl implements MyService{
 			
 			mobilePhoneUserCountResult = mybatisDao2.count(null, false, UserCashAccountModel.class, new DaoQueryCondition("userId", DaoQueryOperator.EQ, member.getUserId()));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户账户已存在");
+				throw new FrameworkRuntimeException("用户账户已存在");
 			UserCashAccountModel userCashAccount = new UserCashAccountModel();
 			userCashAccount.setUserName(userName);
 			userCashAccount.setMobilePhone(mobilePhone);
@@ -163,7 +163,7 @@ public class MyService2Impl implements MyService{
 			
 			mobilePhoneUserCountResult = mybatisDao2.count(null, false, UserCashAccountBalanceModel.class, new DaoQueryCondition("cashAccountId", DaoQueryOperator.EQ, userCashAccount.getId()));
 			if(mobilePhoneUserCountResult>0)
-				throw new TeshehuiRuntimeException("用户账户余额已存在");
+				throw new FrameworkRuntimeException("用户账户余额已存在");
 			Map<String, Long> balanceMap = JSONUtil.toMap(balance, Long.class);
 			UserCashAccountBalanceModel userCashAccountBalance = new UserCashAccountBalanceModel();
 			String currencyTypeCode = "01";
